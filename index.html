@@ -1,0 +1,1764 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cuestionario de Estudio - Máquinas y Circuitos Eléctricos</title>
+    <link rel="icon" type="image/x-icon" href="img/icon.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        electric: '#0066FF',
+                        darkNavy: '#0F172A',
+                        cardBg: '#1E293B',
+                        accentGreen: '#10B981',
+                        accentYellow: '#F59E0B',
+                        accentRed: '#EF4444'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0F172A;
+            color: #F8FAFC;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #1E293B;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #475569;
+        }
+
+        /* Flashcard flip animation */
+        .perspective-1000 {
+            perspective: 1000px;
+        }
+        .transform-style-3d {
+            transform-style: preserve-3d;
+        }
+        .backface-hidden {
+            backface-visibility: hidden;
+        }
+        .rotate-y-180 {
+            transform: rotateY(180deg);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between selection:bg-electric selection:text-white">
+
+    <!-- HEADER / NAVIGATION -->
+    <header class="bg-cardBg/90 backdrop-blur border-b border-slate-700/60 sticky top-0 z-30">
+        <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+            <div class="flex items-center space-x-3 cursor-pointer" onclick="app.showDashboard()">
+                <div class="bg-electric p-2 rounded-lg text-white shadow-lg shadow-electric/30">
+                    <i data-lucide="zap" class="w-6 h-6"></i>
+                </div>
+                <div>
+                    <h1 class="font-bold text-lg leading-tight text-white">PrepElec 2026</h1>
+                    <p class="text-xs text-slate-400">Duoc UC / Liceo Politécnico Andes</p>
+                </div>
+            </div>
+
+            <div class="flex items-center space-x-2">
+                <button onclick="app.toggleFormulaModal()" class="flex items-center space-x-2 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-600 px-3 py-1.5 rounded-lg text-xs md:text-sm font-medium transition-all">
+                    <i data-lucide="calculator" class="w-4 h-4 text-accentYellow"></i>
+                    <span class="hidden sm:inline">Formulario & Calc</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT AREA -->
+    <main class="max-w-6xl mx-auto px-4 py-6 flex-grow w-full">
+
+        <!-- DASHBOARD VIEW -->
+        <section id="view-dashboard" class="space-y-8">
+            <!-- Welcome Banner -->
+            <div class="bg-gradient-to-r from-blue-900/60 via-cardBg to-slate-800 border border-electric/30 rounded-2xl p-6 md:p-8 relative overflow-hidden shadow-2xl">
+                <div class="absolute -right-10 -bottom-10 opacity-10 pointer-events-none">
+                    <i data-lucide="cpu" class="w-80 h-80 text-electric"></i>
+                </div>
+                <div class="max-w-2xl relative z-10 space-y-3">
+                    <span class="bg-electric/20 text-electric border border-electric/40 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">
+                        Prueba Semestral 4° Medio
+                    </span>
+                    <h2 class="text-2xl md:text-4xl font-extrabold text-white">Entrenamiento de Instalaciones y Máquinas Eléctricas</h2>
+                    <p class="text-slate-300 text-sm md:text-base leading-relaxed">
+                        60 Preguntas clave organizadas por categoría oficial. Practica con explicaciones inmediatas, simula el examen completo o estudia con tarjetas de memoria.
+                    </p>
+                    <div class="pt-2 flex flex-wrap gap-4 text-xs md:text-sm text-slate-300">
+                        <div class="flex items-center space-x-1"><i data-lucide="check-circle-2" class="w-4 h-4 text-accentGreen"></i><span>5 Módulos Temáticos</span></div>
+                        <div class="flex items-center space-x-1"><i data-lucide="check-circle-2" class="w-4 h-4 text-accentGreen"></i><span>Formulario Integrado</span></div>
+                        <div class="flex items-center space-x-1"><i data-lucide="check-circle-2" class="w-4 h-4 text-accentGreen"></i><span>Retroalimentación Inmediata</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MODES SELECTION -->
+            <div>
+                <h3 class="text-xl font-bold text-white mb-4 flex items-center gap-2">
+                    <i data-lucide="play-circle" class="text-electric"></i> Elige tu Modo de Estudio
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+                    <!-- Exam Mode -->
+                    <div onclick="app.startExamMode()" class="bg-cardBg hover:bg-slate-800/80 border border-slate-700/80 hover:border-electric/60 rounded-xl p-5 cursor-pointer transition-all duration-200 group flex flex-col justify-between shadow-lg">
+                        <div>
+                            <div class="w-12 h-12 bg-electric/20 text-electric rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                                <i data-lucide="file-text" class="w-6 h-6"></i>
+                            </div>
+                            <h4 class="font-bold text-lg text-white mb-1 group-hover:text-electric transition-colors">Examen Completo</h4>
+                            <p class="text-xs text-slate-400 mb-4">60 preguntas que cubren todo el temario oficial con temporizador opcional.</p>
+                        </div>
+                        <div class="flex items-center justify-between text-xs font-semibold text-electric pt-2 border-t border-slate-700/50">
+                            <span>60 Preguntas</span>
+                            <i data-lucide="arrow-right" class="w-4 h-4 group-hover:translate-x-1 transition-transform"></i>
+                        </div>
+                    </div>
+
+                    <!-- Topic Mode -->
+                    <div onclick="app.scrollToTopics()" class="bg-cardBg hover:bg-slate-800/80 border border-slate-700/80 hover:border-accentYellow/60 rounded-xl p-5 cursor-pointer transition-all duration-200 group flex flex-col justify-between shadow-lg">
+                        <div>
+                            <div class="w-12 h-12 bg-accentYellow/20 text-accentYellow rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                                <i data-lucide="layers" class="w-6 h-6"></i>
+                            </div>
+                            <h4 class="font-bold text-lg text-white mb-1 group-hover:text-accentYellow transition-colors">Práctica por Tema</h4>
+                            <p class="text-xs text-slate-400 mb-4">Selecciona un módulo específico de 12 preguntas para reforzar debilidades.</p>
+                        </div>
+                        <div class="flex items-center justify-between text-xs font-semibold text-accentYellow pt-2 border-t border-slate-700/50">
+                            <span>12 Preguntas por Tema</span>
+                            <i data-lucide="arrow-right" class="w-4 h-4 group-hover:translate-x-1 transition-transform"></i>
+                        </div>
+                    </div>
+
+                    <!-- Flashcard Mode -->
+                    <div onclick="app.startFlashcards()" class="bg-cardBg hover:bg-slate-800/80 border border-slate-700/80 hover:border-accentGreen/60 rounded-xl p-5 cursor-pointer transition-all duration-200 group flex flex-col justify-between shadow-lg">
+                        <div>
+                            <div class="w-12 h-12 bg-accentGreen/20 text-accentGreen rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                                <i data-lucide="credit-card" class="w-6 h-6"></i>
+                            </div>
+                            <h4 class="font-bold text-lg text-white mb-1 group-hover:text-accentGreen transition-colors">Tarjetas de Memoria</h4>
+                            <p class="text-xs text-slate-400 mb-4">Repaso ultra-rápido de conceptos, fórmulas y definiciones clave sin opciones.</p>
+                        </div>
+                        <div class="flex items-center justify-between text-xs font-semibold text-accentGreen pt-2 border-t border-slate-700/50">
+                            <span>Repaso Rápido</span>
+                            <i data-lucide="arrow-right" class="w-4 h-4 group-hover:translate-x-1 transition-transform"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TOPICS LIST -->
+            <div id="topics-section">
+                <h3 class="text-xl font-bold text-white mb-4 flex items-center gap-2">
+                    <i data-lucide="book-open" class="text-electric"></i> Módulos del Temario Oficial (12 preguntas c/u)
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="topics-grid">
+                    <!-- Injected dynamically by JS -->
+                </div>
+            </div>
+        </section>
+
+        <!-- QUIZ / EXAM VIEW -->
+        <section id="view-quiz" class="hidden max-w-4xl mx-auto space-y-6">
+            <!-- Top Controls & Progress -->
+            <div class="bg-cardBg border border-slate-700 rounded-xl p-4 space-y-3">
+                <div class="flex items-center justify-between text-xs md:text-sm text-slate-300">
+                    <button onclick="app.showDashboard()" class="flex items-center space-x-1 text-slate-400 hover:text-white transition-colors">
+                        <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                        <span>Salir al Menú</span>
+                    </button>
+                    <span id="quiz-topic-badge" class="font-semibold text-electric bg-electric/10 border border-electric/30 px-2.5 py-0.5 rounded-full text-xs">
+                        Módulo 1
+                    </span>
+                    <div class="flex items-center space-x-3">
+                        <span id="timer-display" class="font-mono text-accentYellow font-bold hidden flex items-center gap-1">
+                            <i data-lucide="clock" class="w-4 h-4"></i> 00:00
+                        </span>
+                        <span class="font-semibold text-slate-200">
+                            Pregunta <span id="quiz-current-num" class="text-electric">1</span> de <span id="quiz-total-num">12</span>
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Progress Bar -->
+                <div class="w-full bg-slate-800 h-2.5 rounded-full overflow-hidden">
+                    <div id="quiz-progress-bar" class="bg-electric h-full transition-all duration-300" style="width: 0%"></div>
+                </div>
+            </div>
+
+            <!-- Question Card -->
+            <div class="bg-cardBg border border-slate-700 rounded-xl p-6 md:p-8 space-y-6 shadow-xl relative">
+                <div id="question-text" class="text-lg md:text-xl font-semibold text-slate-100 leading-snug">
+                    <!-- Question text injected here -->
+                </div>
+
+                <!-- Options Grid -->
+                <div id="options-container" class="space-y-3">
+                    <!-- Options injected here -->
+                </div>
+
+                <!-- Feedback Section -->
+                <div id="feedback-card" class="hidden rounded-xl p-5 border transition-all space-y-3">
+                    <div class="flex items-center space-x-2 font-bold text-base" id="feedback-title">
+                        <!-- Correct/Incorrect badge -->
+                    </div>
+                    <div id="feedback-explanation" class="text-sm text-slate-300 leading-relaxed">
+                        <!-- Explanation text -->
+                    </div>
+                </div>
+
+                <!-- Bottom Action Controls -->
+                <div class="flex items-center justify-between pt-4 border-t border-slate-700/60">
+                    <button id="btn-hint" onclick="app.toggleHint()" class="text-xs md:text-sm text-slate-400 hover:text-accentYellow flex items-center space-x-1.5 transition-colors">
+                        <i data-lucide="help-circle" class="w-4 h-4"></i>
+                        <span>Ver Pista / Fórmula</span>
+                    </button>
+
+                    <button id="btn-next" onclick="app.nextQuestion()" class="bg-electric hover:bg-blue-600 text-white font-semibold px-6 py-2.5 rounded-lg text-sm flex items-center space-x-2 shadow-lg shadow-electric/20 transition-all opacity-50 cursor-not-allowed" disabled>
+                        <span>Siguiente</span>
+                        <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                    </button>
+                </div>
+
+                <!-- Hint popup/box -->
+                <div id="hint-box" class="hidden bg-slate-800/90 border border-accentYellow/40 rounded-lg p-3 text-xs text-accentYellow">
+                    <p class="font-bold mb-1 flex items-center gap-1"><i data-lucide="lightbulb" class="w-3.5 h-3.5"></i> Pista:</p>
+                    <p id="hint-text"></p>
+                </div>
+            </div>
+        </section>
+
+        <!-- FLASHCARDS VIEW -->
+        <section id="view-flashcards" class="hidden max-w-2xl mx-auto space-y-6">
+            <div class="flex items-center justify-between text-sm text-slate-300">
+                <button onclick="app.showDashboard()" class="flex items-center space-x-1 text-slate-400 hover:text-white">
+                    <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                    <span>Volver</span>
+                </button>
+                <span class="font-semibold">Tarjeta <span id="fc-current">1</span> de <span id="fc-total">60</span></span>
+            </div>
+
+            <!-- Flashcard Container -->
+            <div class="perspective-1000 w-full h-80 cursor-pointer" onclick="app.flipFlashcard()">
+                <div id="flashcard-inner" class="relative w-full h-full transform-style-3d transition-transform duration-500 rounded-2xl">
+                    <!-- Front -->
+                    <div class="absolute inset-0 bg-cardBg border-2 border-electric/40 rounded-2xl p-6 flex flex-col justify-between backface-hidden shadow-2xl">
+                        <span class="text-xs font-bold text-electric uppercase tracking-wider" id="fc-category">Categoría</span>
+                        <div class="text-center my-auto">
+                            <h3 id="fc-question" class="text-xl font-bold text-white leading-relaxed">Pregunta o Concepto</h3>
+                            <p class="text-xs text-slate-400 mt-4"><i data-lucide="rotate-cw" class="w-3 h-3 inline"></i> Toca para girar la tarjeta</p>
+                        </div>
+                        <div class="text-right text-xs text-slate-500">PrepElec 2026</div>
+                    </div>
+                    <!-- Back -->
+                    <div class="absolute inset-0 bg-slate-800 border-2 border-accentGreen/60 rounded-2xl p-6 flex flex-col justify-between backface-hidden rotate-y-180 shadow-2xl">
+                        <span class="text-xs font-bold text-accentGreen uppercase tracking-wider">Respuesta y Explicación</span>
+                        <div class="my-auto text-slate-200 text-sm md:text-base leading-relaxed overflow-y-auto max-h-48 pr-1" id="fc-answer">
+                            Respuesta aquí
+                        </div>
+                        <div class="text-right text-xs text-slate-500">PrepElec 2026</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Controls -->
+            <div class="flex items-center justify-between">
+                <button onclick="app.prevFlashcard()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-1">
+                    <i data-lucide="chevron-left" class="w-4 h-4"></i> Anteriores
+                </button>
+                <button onclick="app.nextFlashcard()" class="bg-electric hover:bg-blue-600 text-white px-5 py-2 rounded-lg text-sm font-medium flex items-center gap-1">
+                    Siguiente <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                </button>
+            </div>
+        </section>
+
+        <!-- RESULTS VIEW -->
+        <section id="view-results" class="hidden max-w-4xl mx-auto space-y-8">
+            <div class="bg-cardBg border border-slate-700 rounded-2xl p-6 md:p-10 text-center space-y-6 shadow-2xl">
+                <div class="inline-flex p-4 rounded-full bg-electric/20 text-electric mb-2" id="result-icon-container">
+                    <i data-lucide="award" class="w-12 h-12"></i>
+                </div>
+                <div>
+                    <h2 class="text-3xl font-extrabold text-white" id="result-title">¡Evaluación Completada!</h2>
+                    <p class="text-slate-400 text-sm mt-1" id="result-subtitle">Resumen de tu desempeño de estudio</p>
+                </div>
+
+                <!-- Stats Grid -->
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 py-4">
+                    <div class="bg-slate-800/80 p-4 rounded-xl border border-slate-700">
+                        <span class="text-xs text-slate-400 uppercase font-semibold">Puntaje Total</span>
+                        <div class="text-2xl font-black text-white mt-1"><span id="res-score">0</span> / <span id="res-total">60</span></div>
+                    </div>
+                    <div class="bg-slate-800/80 p-4 rounded-xl border border-slate-700">
+                        <span class="text-xs text-slate-400 uppercase font-semibold">Porcentaje</span>
+                        <div class="text-2xl font-black text-electric mt-1" id="res-percent">0%</div>
+                    </div>
+                    <div class="bg-slate-800/80 p-4 rounded-xl border border-slate-700">
+                        <span class="text-xs text-slate-400 uppercase font-semibold">Correctas</span>
+                        <div class="text-2xl font-black text-accentGreen mt-1" id="res-correct">0</div>
+                    </div>
+                    <div class="bg-slate-800/80 p-4 rounded-xl border border-slate-700">
+                        <span class="text-xs text-slate-400 uppercase font-semibold">Incorrectas</span>
+                        <div class="text-2xl font-black text-accentRed mt-1" id="res-incorrect">0</div>
+                    </div>
+                </div>
+
+                <div class="flex flex-wrap justify-center gap-4">
+                    <button onclick="app.showDashboard()" class="bg-slate-800 hover:bg-slate-700 text-white font-semibold px-6 py-2.5 rounded-xl text-sm transition-all border border-slate-600">
+                        Menú Principal
+                    </button>
+                    <button id="btn-retry-failed" onclick="app.retryFailedQuestions()" class="bg-accentYellow hover:bg-yellow-600 text-slate-950 font-bold px-6 py-2.5 rounded-xl text-sm transition-all shadow-lg hidden">
+                        Reintentar Solo Errores (<span id="failed-count">0</span>)
+                    </button>
+                </div>
+            </div>
+
+            <!-- DETAILED REVIEW OF ERRORS -->
+            <div class="space-y-4">
+                <h3 class="text-xl font-bold text-white flex items-center gap-2">
+                    <i data-lucide="file-search" class="text-electric"></i> Revision de Respuestas
+                </h3>
+                <div id="review-container" class="space-y-4">
+                    <!-- Injected by JS -->
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FORMULA & CALCULATOR MODAL -->
+    <div id="modal-formula" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-cardBg border border-slate-700 rounded-2xl max-w-2xl w-full max-h-[90vh] flex flex-col shadow-2xl overflow-hidden">
+            <!-- Modal Header -->
+            <div class="p-4 border-b border-slate-700 flex items-center justify-between bg-slate-800/50">
+                <div class="flex items-center space-x-2">
+                    <i data-lucide="calculator" class="text-accentYellow"></i>
+                    <h3 class="font-bold text-white">Formulario & Calculadoras Rápidas</h3>
+                </div>
+                <button onclick="app.toggleFormulaModal()" class="text-slate-400 hover:text-white">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <!-- Modal Body -->
+            <div class="p-6 overflow-y-auto space-y-6 text-sm">
+                <!-- Formulas List -->
+                <div class="space-y-3">
+                    <h4 class="font-bold text-electric border-b border-slate-700 pb-1">Fórmulas Principales</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+                        <div class="bg-slate-800 p-3 rounded-lg border border-slate-700">
+                            <span class="font-bold text-slate-200">Triángulo de Potencias:</span>
+                            <p class="font-mono text-accentYellow mt-1">S = √(P² + Q²)</p>
+                            <p class="font-mono text-slate-300">P = S · cos(φ) | Q = S · sin(φ)</p>
+                        </div>
+                        <div class="bg-slate-800 p-3 rounded-lg border border-slate-700">
+                            <span class="font-bold text-slate-200">Compensación Reactiva:</span>
+                            <p class="font-mono text-accentYellow mt-1">Qc = P · (tan φ1 - tan φ2)</p>
+                            <p class="font-mono text-slate-300">C = Qc / (2 · π · f · V²)</p>
+                        </div>
+                        <div class="bg-slate-800 p-3 rounded-lg border border-slate-700">
+                            <span class="font-bold text-slate-200">Velocidad Sincronismo:</span>
+                            <p class="font-mono text-accentYellow mt-1">ns = (120 · f) / P_polos</p>
+                        </div>
+                        <div class="bg-slate-800 p-3 rounded-lg border border-slate-700">
+                            <span class="font-bold text-slate-200">Caída de Tensión (1Φ y 3Φ):</span>
+                            <p class="font-mono text-accentYellow mt-1">ΔV1Φ = (2·L·I·ρ)/S</p>
+                            <p class="font-mono text-slate-300">ΔV3Φ = (√3·L·I·ρ)/S</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Interactive Capacitance Calculator -->
+                <div class="bg-slate-800/80 p-4 rounded-xl border border-slate-700 space-y-3">
+                    <h4 class="font-bold text-accentGreen flex items-center gap-1">
+                        <i data-lucide="cpu" class="w-4 h-4"></i> Calculadora Rápida de C (uF)
+                    </h4>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-2 text-xs">
+                        <div>
+                            <label class="block text-slate-400 mb-1">Qc (VAR)</label>
+                            <input type="number" id="calc-qc" value="2000" class="w-full bg-slate-900 border border-slate-700 rounded p-1.5 text-white">
+                        </div>
+                        <div>
+                            <label class="block text-slate-400 mb-1">Voltaje V (Volts)</label>
+                            <input type="number" id="calc-v" value="220" class="w-full bg-slate-900 border border-slate-700 rounded p-1.5 text-white">
+                        </div>
+                        <div>
+                            <label class="block text-slate-400 mb-1">Frecuencia f (Hz)</label>
+                            <input type="number" id="calc-f" value="50" class="w-full bg-slate-900 border border-slate-700 rounded p-1.5 text-white">
+                        </div>
+                        <div class="flex items-end">
+                            <button onclick="app.calculateCapacitance()" class="w-full bg-accentGreen hover:bg-emerald-600 text-slate-950 font-bold p-1.5 rounded transition-all">
+                                Calcular
+                            </button>
+                        </div>
+                    </div>
+                    <div id="calc-result" class="text-xs font-mono font-bold text-accentYellow pt-1">
+                        Resultado: -- µF
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="bg-cardBg border-t border-slate-800 py-4 text-center text-xs text-slate-400">
+        <p>PrepElec 2026 - Guía interactiva de estudio intensivo para examen de Electricidad / Electrónica 4° Medio.</p>
+    </footer>
+
+    <!-- JS LOGIC & QUESTION DATABASE -->
+    <script>
+        // QUESTION DATABASE (EXACTLY 60 QUESTIONS - 12 PER CATEGORY)
+        const QUESTIONS = [
+            // ==========================================
+            // CATEGORY 1: Potencia en C.A. y Compensación Reactiva (12)
+            // ==========================================
+            {
+                id: 1,
+                category: "Potencia C.A. y Compensación",
+                catId: 1,
+                question: "¿Cuál de las siguientes potencias en corriente alterna realiza un trabajo útil real, como generar movimiento mecánico o calor?",
+                options: [
+                    "Potencia Aparente (S)",
+                    "Potencia Activa (P)",
+                    "Potencia Reactiva (Q)",
+                    "Potencia Distorsionante (D)"
+                ],
+                correct: 1,
+                hint: "Se mide en Watts (W) o Kilowatts (kW).",
+                explanation: "La Potencia Activa (P) es la única de la corriente alterna que se transforma de manera efectiva en trabajo útil (calor, movimiento, luz). Su unidad es el Watt (W)."
+            },
+            {
+                id: 2,
+                category: "Potencia C.A. y Compensación",
+                catId: 1,
+                question: "En el triángulo de potencias, ¿cuál es la relación matemática exacta entre la potencia activa (P), la reactiva (Q) y la aparente (S)?",
+                options: [
+                    "S = P + Q",
+                    "S = √(P² + Q²)",
+                    "P = √(S² + Q²)",
+                    "Q = S · cos(φ)"
+                ],
+                correct: 1,
+                hint: "Se aplica el Teorema de Pitágoras sobre el triángulo rectángulo de potencias.",
+                explanation: "Por teorema de Pitágoras en el triángulo de potencias, la hipotenusa (S) cumple que S² = P² + Q², por lo tanto S = √(P² + Q²)."
+            },
+            {
+                id: 3,
+                category: "Potencia C.A. y Compensación",
+                catId: 1,
+                question: "¿En qué unidad de medida se expresa formalmente la Potencia Reactiva (Q)?",
+                options: [
+                    "Watts (W)",
+                    "Volt-Amperios (VA)",
+                    "Volt-Amperios Reactivos (VAR)",
+                    "Joules (J)"
+                ],
+                correct: 2,
+                hint: "Lleva 'Reactivos' en su nombre.",
+                explanation: "La potencia reactiva necesaria para magnetizar motores y transformadores se mide en Volt-Amperios Reactivos (VAR o kVAR)."
+            },
+            {
+                id: 4,
+                category: "Potencia C.A. y Compensación",
+                catId: 1,
+                question: "¿Qué representa físicamente un bajo factor de potencia (cos φ < 0.85) en una instalación industrial?",
+                options: [
+                    "Un consumo excesivo de energía activa útil.",
+                    "Un alto consumo de corriente reactiva, causando sobrecargas en cables y multas.",
+                    "Un cortocircuito directo entre fase y neutro.",
+                    "Que la frecuencia de la red bajó de 50 Hz."
+                ],
+                correct: 1,
+                hint: "Significa que estás demandando mucha corriente reactiva que no hace trabajo útil pero recarga los cables.",
+                explanation: "Un cos φ bajo significa que la instalación exige mucha corriente reactiva para crear campos magnéticos, saturando líneas y transfórmadores sin aprovechar la energía real."
+            },
+            {
+                id: 5,
+                category: "Potencia C.A. y Compensación",
+                catId: 1,
+                question: "¿Qué elemento eléctrico se conecta en paralelo con las cargas inductivas para corregir/compensar el factor de potencia?",
+                options: [
+                    "Un banco de resistencias óhmicas",
+                    "Un transformador elevador",
+                    "Un banco de condensadores (capacitores)",
+                    "Un relé térmico"
+                ],
+                correct: 2,
+                hint: "Genera potencia reactiva capacitiva que cancela la reactiva inductiva.",
+                explanation: "Los condensadores suministran potencia reactiva capacitiva (Qc), la cual anula en gran medida la potencia reactiva inductiva demandada por los motores."
+            },
+            {
+                id: 6,
+                category: "Potencia C.A. y Compensación",
+                catId: 1,
+                question: "Fórmula para calcular la potencia reactiva de compensación (Qc) necesaria para elevar el factor de potencia:",
+                options: [
+                    "Qc = P · (tan φ1 - tan φ2)",
+                    "Qc = S / cos(φ)",
+                    "Qc = P · (cos φ1 + cos φ2)",
+                    "Qc = V · I · √3"
+                ],
+                correct: 0,
+                hint: "Depende de la potencia activa P y la diferencia entre la tangente del ángulo inicial y final.",
+                explanation: "La fórmula estándar es Qc = P · (tan φ1 - tan φ2), donde φ1 es el ángulo inicial y φ2 es el ángulo objetivo deseado."
+            },
+            {
+                id: 7,
+                category: "Potencia C.A. y Compensación",
+                catId: 1,
+                question: "Para una potencia reactiva capacitiva Qc de 1500 VAR a 220 V y 50 Hz, ¿cuál es la fórmula para calcular la capacitancia C en Faradios?",
+                options: [
+                    "C = Qc / (2 · π · f · V²)",
+                    "C = Qc · 2 · π · f · V",
+                    "C = V² / (Qc · f)",
+                    "C = (P · cos φ) / V²"
+                ],
+                correct: 0,
+                hint: "La reactancia capacitiva es Xc = 1 / (2πfC) y Qc = V² / Xc.",
+                explanation: "Como Qc = V² · ω · C = V² · 2πfC, despejando C se obtiene C = Qc / (2 · π · f · V²)."
+            },
+            {
+                id: 8,
+                category: "Potencia C.A. y Compensación",
+                catId: 1,
+                question: "Si el cálculo de un capacitor entrega C = 0.0000985 F, ¿cuántos microfaradios (µF) equivale?",
+                options: [
+                    "0.985 µF",
+                    "9.85 µF",
+                    "98.5 µF",
+                    "985 µF"
+                ],
+                correct: 2,
+                hint: "Multiplica el valor en Faradios por 1,000,000 (10⁶).",
+                explanation: "Para convertir de Faradios a microfaradios se multiplica por 10⁶: 0.0000985 × 1,000,000 = 98.5 µF."
+            },
+            {
+                id: 9,
+                category: "Potencia C.A. y Compensación",
+                catId: 1,
+                question: "Si una máquina consume P = 4 kW y Q = 3 kVAR, ¿cuál es su potencia aparente S?",
+                options: [
+                    "7 kVA",
+                    "5 kVA",
+                    "1 kVA",
+                    "12 kVA"
+                ],
+                correct: 1,
+                hint: "Aplica Pitágoras: S = √(4² + 3²).",
+                explanation: "S = √(4² + 3²) = √(16 + 9) = √25 = 5 kVA."
+            },
+            {
+                id: 10,
+                category: "Potencia C.A. y Compensación",
+                catId: 1,
+                question: "Si una carga tiene S = 10 kVA y P = 8 kW, ¿cuál es su factor de potencia (cos φ)?",
+                options: [
+                    "0.6",
+                    "1.25",
+                    "0.8",
+                    "0.95"
+                ],
+                correct: 2,
+                hint: "cos φ = P / S.",
+                explanation: "El factor de potencia es cos φ = P / S = 8 kW / 10 kVA = 0.8."
+            },
+            {
+                id: 11,
+                category: "Potencia C.A. y Compensación",
+                catId: 1,
+                question: "¿Qué sucede con la corriente total demandada por una instalación cuando se compensa el factor de potencia con condensadores?",
+                options: [
+                    "Aumenta drásticamente.",
+                    "Disminuye, reduciendo las pérdidas por efecto Joule en los cables.",
+                    "Permanece exactamente igual.",
+                    "Se vuelve de corriente continua."
+                ],
+                correct: 1,
+                hint: "Al reducir la corriente reactiva total, disminuye la corriente total entregada por la red.",
+                explanation: "Al reducir la potencia aparente S, disminuye la corriente I = S / V, reduciendo pérdidas en conductores y caídas de tensión."
+            },
+            {
+                id: 12,
+                category: "Potencia C.A. y Compensación",
+                catId: 1,
+                question: "En un circuito Puramente Inductivo, ¿cómo es el desfase entre la tensión (V) y la corriente (I)?",
+                options: [
+                    "La corriente está en fase con la tensión.",
+                    "La corriente adelanta 90° a la tensión.",
+                    "La corriente atrasa 90° respecto a la tensión.",
+                    "Tensión y corriente se anulan."
+                ],
+                correct: 2,
+                hint: "Las inductancias 'se oponen a los cambios de corriente', por ende la corriente se frena.",
+                explanation: "En una inductancia pura, la corriente está atrasada 90° con respecto a la tensión."
+            },
+
+            // ==========================================
+            // CATEGORY 2: Máquinas Eléctricas (12)
+            // ==========================================
+            {
+                id: 13,
+                category: "Máquinas Eléctricas",
+                catId: 2,
+                question: "¿Cuál es el principio físico fundamental en el que se basa el funcionamiento de un transformador?",
+                options: [
+                    "Efecto Joule",
+                    "Inducción electromagnética (Ley de Faraday)",
+                    "Efecto fotoeléctrico",
+                    "Fuerza electrostática de Coulomb"
+                ],
+                correct: 1,
+                hint: "Un flujo magnético variable en el núcleo induce voltaje en el secundario.",
+                explanation: "Un transformador opera mediante inducción electromagnética mutua entre sus devanados a través del núcleo magnético."
+            },
+            {
+                id: 14,
+                category: "Máquinas Eléctricas",
+                catId: 2,
+                question: "Fórmula de la relación de transformación (a) en un transformador ideal:",
+                options: [
+                    "a = V1 / V2 = N1 / N2 = I2 / I1",
+                    "a = V1 / V2 = N2 / N1 = I1 / I2",
+                    "a = V1 · V2 = N1 · N2",
+                    "a = I1 / I2"
+                ],
+                correct: 0,
+                hint: "Recuerda que la relación de corrientes es INVERSA a la de voltaje y espiras.",
+                explanation: "a = V1/V2 = N1/N2. Como la potencia se conserva (V1·I1 = V2·I2), I2/I1 es igual a a."
+            },
+            {
+                id: 15,
+                category: "Máquinas Eléctricas",
+                catId: 2,
+                question: "Un transformador tiene 1000 espiras en el primario y 100 en el secundario. Si se aplican 220 V en el primario, ¿cuál es el voltaje secundario?",
+                options: [
+                    "2200 V",
+                    "22 V",
+                    "110 V",
+                    "44 V"
+                ],
+                correct: 1,
+                hint: "a = N1/N2 = 1000/100 = 10. V2 = V1 / 10.",
+                explanation: "a = 1000/100 = 10. V2 = V1 / a = 220 V / 10 = 22 V. Es un transformador reductor."
+            },
+            {
+                id: 16,
+                category: "Máquinas Eléctricas",
+                catId: 2,
+                question: "¿Cómo se genera el movimiento del rotor en un motor asíncrono o de inducción trifásico?",
+                options: [
+                    "Mediante escobillas que conducen corriente continua al rotor.",
+                    "El estator genera un campo magnético giratorio que induce corrientes en el rotor.",
+                    "Mediante imanes permanentes que rotan mecánicamente.",
+                    "Por la vibración térmica del estator."
+                ],
+                correct: 1,
+                hint: "Las 3 fases desfasadas 120° crean un campo magnético que gira a la velocidad de sincronismo.",
+                explanation: "Las tres corrientes desfasadas generan un Campo Magnético Giratorio (CMG) en el estator, induciendo corrientes y torque en el rotor."
+            },
+            {
+                id: 17,
+                category: "Máquinas Eléctricas",
+                catId: 2,
+                question: "Fórmula de la velocidad de sincronismo (ns) del campo magnético en un motor AC:",
+                options: [
+                    "ns = (60 · f) / P",
+                    "ns = (120 · f) / P",
+                    "ns = P / (120 · f)",
+                    "ns = 2 · π · f"
+                ],
+                correct: 1,
+                hint: "f en Hertz, P es el NÚMERO DE POLOS totales.",
+                explanation: "ns = (120 · f) / P, donde f es la frecuencia (Hz) y P es el número total de polos del motor."
+            },
+            {
+                id: 18,
+                category: "Máquinas Eléctricas",
+                catId: 2,
+                question: "¿Cuál es la velocidad de sincronismo (ns) de un motor trifásico de 4 polos conectado a la red chilena de 50 Hz?",
+                options: [
+                    "3000 RPM",
+                    "1500 RPM",
+                    "1000 RPM",
+                    "750 RPM"
+                ],
+                correct: 1,
+                hint: "ns = (120 × 50) / 4.",
+                explanation: "ns = (120 × 50) / 4 = 6000 / 4 = 1500 RPM."
+            },
+            {
+                id: 19,
+                category: "Máquinas Eléctricas",
+                catId: 2,
+                question: "¿Qué es el 'deslizamiento' (s) en un motor de inducción asíncrono?",
+                options: [
+                    "La falla cuando las correas de la polea resbalan.",
+                    "La diferencia relativa entre la velocidad de sincronismo y la velocidad real del rotor.",
+                    "La velocidad de rotación de los rodamientos.",
+                    "El ángulo de desfase entre tensión y corriente."
+                ],
+                correct: 1,
+                hint: "El rotor gira un poco más lento que el campo magnético giratorio.",
+                explanation: "El deslizamiento es s = (ns - n) / ns. Representa cuánto más lento gira el rotor respecto al campo magnético giratorio."
+            },
+            {
+                id: 20,
+                category: "Máquinas Eléctricas",
+                catId: 2,
+                question: "En la caja de bornes de un motor trifásico estándar (con terminales U1, V1, W1 y U2, V2, W2), ¿cómo se realiza la conexión ESTRELLA (Y)?",
+                options: [
+                    "Uniendo U1 con V1 y W1.",
+                    "Uniendo horizontalmente U2, V2 y W2 juntos en un punto neutro.",
+                    "Uniendo verticalmente U1-U2, V1-V2, W1-W2.",
+                    "Conectando las tres fases a U2, V2 y W2 sin puentes."
+                ],
+                correct: 1,
+                hint: "Se crea un punto común uniendo las tres puntas finales del devanado.",
+                explanation: "Para la conexión Estrella se cortocircuitan mediante puentes los terminales U2-V2-W2 formando el punto neutro."
+            },
+            {
+                id: 21,
+                category: "Máquinas Eléctricas",
+                catId: 2,
+                question: "¿Cómo se realiza la conexión TRIÁNGULO (Δ) en la caja de bornes de un motor trifásico?",
+                options: [
+                    "Uniendo los terminales en paralelo mediante tres puentes verticales (U1-W2, V1-U2, W1-V2).",
+                    "Uniendo U1, V1, W1 juntos.",
+                    "Dejando los bornes libres sin puentes.",
+                    "Conectando los capacitores en serie con U1."
+                ],
+                correct: 0,
+                hint: "Cada bobina recibe la tensión entre fases (fase a fase).",
+                explanation: "En triángulo se colocan 3 puentes paralelos/verticales conectando el final de una bobina con el inicio de la siguiente."
+            },
+            {
+                id: 22,
+                category: "Máquinas Eléctricas",
+                catId: 2,
+                question: "Un motor trifásico indica en placa 220V/380V. Si la red trifásica disponible es de 380V entre fases, ¿cómo debe conectarse?",
+                options: [
+                    "En Triángulo (Δ)",
+                    "En Estrella (Y)",
+                    "Monofásico con condensador",
+                    "No se puede conectar"
+                ],
+                correct: 1,
+                hint: "El mayor voltaje de placa corresponde a la conexión Estrella para no quemar las bobinas.",
+                explanation: "El menor voltaje (220V) es el que soporta cada bobina individual. A 380V de red se debe conectar en Estrella para que cada bobina reciba 380/√3 = 220V."
+            },
+            {
+                id: 23,
+                category: "Máquinas Eléctricas",
+                catId: 2,
+                question: "¿Cuál es la función del condensador de arranque en un motor Monofásico de fase partida?",
+                options: [
+                    "Aumentar el voltaje a 380V.",
+                    "Crear un desfase en el devanado auxiliar para simular una segunda fase y generar torque inicial.",
+                    "Proteger contra sobrecargas.",
+                    "Regular la frecuencia de los polos."
+                ],
+                correct: 1,
+                hint: "El motor monofásico no tiene un verdadero campo giratorio natural sin ayuda de una fase desfasada.",
+                explanation: "Crea un desfase de casi 90° en la corriente del devanado auxiliar, produciendo el par de arranque necesario."
+            },
+            {
+                id: 24,
+                category: "Máquinas Eléctricas",
+                catId: 2,
+                question: "En un transformador trifásico, ¿cuál de los siguientes NO es un tipo de conexión estándar de sus devanados?",
+                options: [
+                    "Estrella (Y)",
+                    "Triángulo (Delta - D)",
+                    "Zig-Zag (Z)",
+                    "Hexagonal Cruzada (H)"
+                ],
+                correct: 3,
+                hint: "Las tres principales son Estrella, Triángulo y Zig-Zag.",
+                explanation: "Las conexiones normalizadas de transformadores trifásicos son Estrella (Y), Triángulo (D) y Zig-Zag (Z)."
+            },
+
+            // ==========================================
+            // CATEGORY 3: Conductores y Norma RIC N°4 (12)
+            // ==========================================
+            {
+                id: 25,
+                category: "Conductores y RIC N°4",
+                catId: 3,
+                question: "¿Qué define el término 'Ampacidad' en un conductor eléctrico?",
+                options: [
+                    "La máxima tensión de aislamiento en Volts.",
+                    "La capacidad máxima de corriente continua que soporta sin superar su temperatura límite.",
+                    "La resistencia medida en Ohms por metro.",
+                    "La cantidad de hilos de cobre del cable."
+                ],
+                correct: 1,
+                hint: "Es la capacidad de amperes (Amp-acidad).",
+                explanation: "La ampacidad es la corriente máxima en Amperes que un conductor transporta continuamente bajo condiciones específicas sin sobrecalentarse."
+            },
+            {
+                id: 26,
+                category: "Conductores y RIC N°4",
+                catId: 3,
+                question: "Según la norma chilena (RIC N°4), ¿cuál es el porcentaje MÁXIMO permitido para la caída de tensión en alimentadores y subalimentadores?",
+                options: [
+                    "1%",
+                    "3%",
+                    "5%",
+                    "10%"
+                ],
+                correct: 1,
+                hint: "Para alimentadores el límite recomendado/normado estricto es 3%.",
+                explanation: "El Pliego Técnico RIC N°4 establece un límite de caída de tensión no mayor al 3% para alimentadores."
+            },
+            {
+                id: 27,
+                category: "Conductores y RIC N°4",
+                catId: 3,
+                question: "Según el código de colores estandarizado en Chile (RIC N°4), ¿qué colores identifican a las tres Fases (L1, L2, L3)?",
+                options: [
+                    "L1: Rojo, L2: Negro, L3: Azul",
+                    "L1: Azul, L2: Blanco, L3: Verde",
+                    "L1: Café, L2: Negro, L3: Rojo",
+                    "L1: Amarillo, L2: Verde, L3: Rojo"
+                ],
+                correct: 0,
+                hint: "Fase 1 Rojo, Fase 2 Negro, Fase 3 Azul.",
+                explanation: "RIC N°4 establece: Fase 1 = Rojo, Fase 2 = Negro, Fase 3 = Azul."
+            },
+            {
+                id: 28,
+                category: "Conductores y RIC N°4",
+                catId: 3,
+                question: "En el código normado de colores de conductores en Chile, ¿qué color está estrictamente reservado para el Neutro (N) y la Tierra de Protección (TP)?",
+                options: [
+                    "Neutro: Blanco | Tierra: Verde o Verde/Amarillo",
+                    "Neutro: Negro | Tierra: Rojo",
+                    "Neutro: Azul | Tierra: Blanco",
+                    "Neutro: Café | Tierra: Amarillo"
+                ],
+                correct: 0,
+                hint: "El neutro es Blanco y la protección a tierra siempre lleva verde.",
+                explanation: "Según RIC N°4: Conductor Neutro = Blanco; Conductor de Protección = Verde o Verde con franja Amarilla."
+            },
+            {
+                id: 29,
+                category: "Conductores y RIC N°4",
+                catId: 3,
+                question: "¿Qué característica especial posee el aislante de tipo EVA o H07Z1-K exigido en lugares de reunión de personas?",
+                options: [
+                    "Es sumergible en aceite mineral.",
+                    "Es libre de halógenos, no emite gases tóxicos ni humos opacos al quemarse.",
+                    "Soporta hasta 10.000 Volts.",
+                    "Es conductor de alta velocidad."
+                ],
+                correct: 1,
+                hint: "Libre de Halógenos (Toxicidad cero).",
+                explanation: "Los cables tipo EVA / H07Z1-K son retardantes al fuego y Libres de Halógenos, impidiendo la emisión de gases tóxicos y ácidos mortales en incendios."
+            },
+            {
+                id: 30,
+                category: "Conductores y RIC N°4",
+                catId: 3,
+                question: "¿Qué significan las siglas del conductor ampliamente usado THHN?",
+                options: [
+                    "Thermoplastic High Heat Nylon-coated",
+                    "Total Heavy High Normal",
+                    "Thermal Heat Hybrid Network",
+                    "Tensión High Halogen Natural"
+                ],
+                correct: 0,
+                hint: "Termoplástico, resistente a altas temperaturas con cubierta de Nylon.",
+                explanation: "THHN significa Thermoplastic High Heat-resistant Nylon-coated (Aislamiento termoplástico resistente a alta temperatura 90°C con cubierta de Nylon)."
+            },
+            {
+                id: 31,
+                category: "Conductores y RIC N°4",
+                catId: 3,
+                question: "Fórmula de la caída de tensión en voltios (ΔV) para un circuito Monofásico en corriente continua o C.A. resistiva pura:",
+                options: [
+                    "ΔV = (2 · L · I · ρ) / S",
+                    "ΔV = (√3 · L · I · ρ) / S",
+                    "ΔV = (L · I) / (2 · S)",
+                    "ΔV = P · L / V"
+                ],
+                correct: 0,
+                hint: "Factor 2 porque la corriente va por la fase y vuelve por el neutro.",
+                explanation: "Para 1Φ: ΔV = (2 · L · I · ρ) / S, donde L es largo, I corriente, ρ resistividad del cobre (0.018 Ω·mm²/m) y S la sección en mm²."
+            },
+            {
+                id: 32,
+                category: "Conductores y RIC N°4",
+                catId: 3,
+                question: "Fórmula de caída de tensión para un circuito Trifásico equilibrado:",
+                options: [
+                    "ΔV = (2 · L · I · ρ) / S",
+                    "ΔV = (√3 · L · I · ρ) / S",
+                    "ΔV = (3 · L · I) / ρ",
+                    "ΔV = L · I · S"
+                ],
+                correct: 1,
+                hint: "Aparece la raíz de 3 (√3 ≈ 1.732) por ser sistema trifásico.",
+                explanation: "En trifásica la caída de tensión entre fases es ΔV = (√3 · L · I · ρ) / S."
+            },
+            {
+                id: 33,
+                category: "Conductores y RIC N°4",
+                catId: 3,
+                question: "Si la caída de tensión calculada para un circuito de 220V es de 11 Voltios, ¿qué porcentaje representa?",
+                options: [
+                    "2%",
+                    "3%",
+                    "5%",
+                    "10%"
+                ],
+                correct: 2,
+                hint: "% ΔV = (11 / 220) × 100.",
+                explanation: "% ΔV = (11 / 220) × 100 = 0.05 × 100 = 5%. Excede el límite normado del 3%."
+            },
+            {
+                id: 34,
+                category: "Conductores y RIC N°4",
+                catId: 3,
+                question: "¿Qué factor de corrección se debe aplicar a la ampacidad de un conductor al agrupar varios cables dentro de una misma canalización?",
+                options: [
+                    "Un factor mayor a 1 para aumentar la capacidad.",
+                    "Un factor de reducción (< 1) por acumulación de calor.",
+                    "No se aplica ningún factor.",
+                    "Se duplica la sección obligatoriamente."
+                ],
+                correct: 1,
+                hint: "Más cables en un tubo acumulan calor, reduciendo la capacidad de disipación.",
+                explanation: "Al agrupar conductores en un tubo, el calor no se disipa igual, por lo que se debe aplicar un factor de reducción de ampacidad (ej. 0.8)."
+            },
+            {
+                id: 35,
+                category: "Conductores y RIC N°4",
+                catId: 3,
+                question: "¿Cuál es el valor estandarizado de la resistividad (ρ) del cobre suave a temperatura de trabajo según norma?",
+                options: [
+                    "0.0178 ≈ 0.018 Ω·mm²/m",
+                    "1.5 Ω·mm²/m",
+                    "0.5 Ω·mm²/m",
+                    "0.001 Ω·mm²/m"
+                ],
+                correct: 0,
+                hint: "Aproximadamente 0.018 en cálculos prácticos.",
+                explanation: "La resistividad del cobre eléctrico utilizado en los cálculos es aproximadamente 0.0178 a 0.018 Ω·mm²/m a 20°C."
+            },
+            {
+                id: 36,
+                category: "Conductores y RIC N°4",
+                catId: 3,
+                question: "En instalaciones domiciliarias e industriales chilenas, ¿cuál es la sección MÍNIMA permitida por norma para un circuito de Alumbrado?",
+                options: [
+                    "0.75 mm²",
+                    "1.5 mm²",
+                    "2.5 mm²",
+                    "4.0 mm²"
+                ],
+                correct: 1,
+                hint: "Alumbrado mínimo 1.5 mm², Enchufes mínimo 2.5 mm².",
+                explanation: "Según RIC N°4, la sección mínima para conductores en circuitos de alumbrado es de 1.5 mm² (y 2.5 mm² para enchufes)."
+            },
+
+            // ==========================================
+            // CATEGORY 4: Esquemas de Fuerza, Mando y CADeSIMU (12)
+            // ==========================================
+            {
+                id: 37,
+                category: "Esquemas y CADeSIMU",
+                catId: 4,
+                question: "En los diagramas de mando eléctrico, ¿qué representan los números 13-14 en un contacto de contactor?",
+                options: [
+                    "Un contacto auxiliar Normal Cerrado (NC).",
+                    "Un contacto auxiliar Normal Abierto (NO) usado generalmente para enclavamiento/autorretención.",
+                    "La bobina de alimentación principal.",
+                    "La conexión de la fase L1 y L2."
+                ],
+                correct: 1,
+                hint: "Los terminales terminados en .3 - .4 son siempre contactos Abiertos (NO).",
+                explanation: "Los números 13-14 identifican un contacto auxiliar Normalmente Abierto (NO), usado clásicamente para retener/enclavar la bobina de mando."
+            },
+            {
+                id: 38,
+                category: "Esquemas y CADeSIMU",
+                catId: 4,
+                question: "En un esquema de control, ¿qué contactos pertenecen al Relé Térmico de protección?",
+                options: [
+                    "13 - 14",
+                    "95 - 96 (NC) y 97 - 98 (NO)",
+                    "A1 - A2",
+                    "1 - 2"
+                ],
+                correct: 1,
+                hint: "Inician con el número 9.",
+                explanation: "El relé térmico posee los contactos auxiliares 95-96 (NC, para interrumpir la bobina) y 97-98 (NO, para señalizar falla)."
+            },
+            {
+                id: 39,
+                category: "Esquemas y CADeSIMU",
+                catId: 4,
+                question: "¿Qué nomenclatura estandarizada reciben las bornes de la bobina de un contactor electromagnético?",
+                options: [
+                    "13 - 14",
+                    "A1 - A2",
+                    "95 - 96",
+                    "L1 - L2"
+                ],
+                correct: 1,
+                hint: "Comienza con la letra A.",
+                explanation: "Los extremos de la bobina de accionamiento del contactor se etiquetan formalmente como A1 y A2."
+            },
+            {
+                id: 40,
+                category: "Esquemas y CADeSIMU",
+                catId: 4,
+                question: "¿Cuál es el objetivo primordial del 'Enclavamiento Eléctrico Cruzado' en un circuito de Inversión de Giro de motor trifásico?",
+                options: [
+                    "Aumentar la velocidad del motor al doble.",
+                    "Impedir energizar ambos contactores (KM1 y KM2) al mismo tiempo, evitando un cortocircuito entre fases.",
+                    "Ahorrar energía eléctrica.",
+                    "Proteger al motor de bajas de tensión."
+                ],
+                correct: 1,
+                hint: "Si KM1 y KM2 entran juntos, se juntan 2 fases directamente.",
+                explanation: "Interconecta un contacto NC de KM1 en la rama de KM2 y viceversa. Evita un cortocircuito directo fase-fase por accionar ambos mandos a la vez."
+            },
+            {
+                id: 41,
+                category: "Esquemas y CADeSIMU",
+                catId: 4,
+                question: "En CADeSIMU, ¿qué diferencia existe entre el esquema de FUERZA (Potencia) y el esquema de MANDO (Control)?",
+                options: [
+                    "El de fuerza opera a bajo voltaje y el de mando lleva los motores.",
+                    "El de fuerza contiene las líneas tripolares y el motor; el de mando contiene botones, bobinas y contactos auxiliares a menor corriente.",
+                    "Son exactamente el mismo esquema sin diferencias.",
+                    "Mando es para corriente continua y fuerza para trifásica exclusivamente."
+                ],
+                correct: 1,
+                hint: "Fuerza lleva los conductores gruesos al motor; Mando controla la lógica de la bobina.",
+                explanation: "Fuerza maneja la potencia alta al motor (contactores principales, relé, motor). Mando gestiona la lógica de control a baja corriente (pulsadores, bobinas, temporizadores)."
+            },
+            {
+                id: 42,
+                category: "Esquemas y CADeSIMU",
+                catId: 4,
+                question: "¿Cómo se logra físicamente invertir el sentido de giro de un motor asíncrono trifásico?",
+                options: [
+                    "Invirtiendo las tres fases al mismo tiempo.",
+                    "Intercambiando la posición de dos fases de alimentación entre sí.",
+                    "Aumentando la frecuencia de 50 Hz a 60 Hz.",
+                    "Desconectando la tierra de protección."
+                ],
+                correct: 1,
+                hint: "Cambia por ejemplo L1 con L2, dejando L3 igual.",
+                explanation: "Para invertir el sentido del campo giratorio y por ende del rotor, basta con permutar dos cualesquiera de las tres fases de alimentación."
+            },
+            {
+                id: 43,
+                category: "Esquemas y CADeSIMU",
+                catId: 4,
+                question: "¿Cuál es la función del pulsador normalmente cerrado (NC) S0 conectado en serie al inicio del circuito de mando?",
+                options: [
+                    "Iniciar la marcha del motor.",
+                    "Pulsador de Parada / Detención general del circuito.",
+                    "Ajustar el tiempo del relé.",
+                    "Realizar el enclavamiento."
+                ],
+                correct: 1,
+                hint: "Al presionarlo interrumpe el paso de corriente a todas las bobinas.",
+                explanation: "Un pulsador NC en serie abre el circuito de mando completo al ser presionado, desenergizando cualquier bobina activa para detener el proceso."
+            },
+            {
+                id: 44,
+                category: "Esquemas y CADeSIMU",
+                catId: 4,
+                question: "En CADeSIMU, si al simular un circuito los cables no cambian de color (o no pasa corriente), ¿cuál es el error más común de diseño?",
+                options: [
+                    "Haber usado cables de distinto grosor visual o conexiones no alineadas en los bornes.",
+                    "El software está caducado.",
+                    "El motor tiene mucha potencia.",
+                    "Falta colocar fusibles en el neutro."
+                ],
+                correct: 0,
+                hint: "CADeSIMU requiere que la línea toque exactamente el punto/borne del componente.",
+                explanation: "CADeSIMU exige continuidad perfecta en los puntos de conexión. Si la línea no coincide exactamente con el terminal del símbolo, el circuito queda abierto."
+            },
+            {
+                id: 45,
+                category: "Esquemas y CADeSIMU",
+                catId: 4,
+                question: "¿Qué símbolo normado representa un Contactor Trifásico en el circuito de FUERZA?",
+                options: [
+                    "Tres contactos principales abiertos marcados como 1-2, 3-4, 5-6 etiquetados KM.",
+                    "Un rectángulo con la letra M.",
+                    "Tres círculos concéntricos.",
+                    "Dos resistencias en paralelo."
+                ],
+                correct: 0,
+                hint: "Los contactos de potencia se numeran 1-2, 3-4, 5-6.",
+                explanation: "El contactor de fuerza utiliza 3 contactos normalmente abiertos etiquetados 1-2 (L1), 3-4 (L2) y 5-6 (L3)."
+            },
+            {
+                id: 46,
+                category: "Esquemas y CADeSIMU",
+                catId: 4,
+                question: "En una partida Estrella-Triángulo (Y-Δ), ¿por qué arranca primero en Estrella?",
+                options: [
+                    "Para aumentar el torque al 300%.",
+                    "Para reducir la corriente de arranque a 1/3 (33%) de la corriente de partida directa.",
+                    "Para que el motor gire en sentido inverso primero.",
+                    "Porque en estrella consume menos voltaje en la red."
+                ],
+                correct: 1,
+                hint: "Disminuye la tensión aplicada a cada bobina a V/√3, limitando el pico de corriente inicial.",
+                explanation: "La conexión Estrella reduce la tensión por fase en √3, lo que disminuye la corriente de arranque a un tercio de la que demandaría en partida directa."
+            },
+            {
+                id: 47,
+                category: "Esquemas y CADeSIMU",
+                catId: 4,
+                question: "¿Qué dispositivo de mando conmuta sus contactos automáticamente en función de un tiempo programado?",
+                options: [
+                    "Relé Térmico",
+                    "Temporizador (Relé de tiempo ON-DELAY / OFF-DELAY)",
+                    "Disyuntor Diferencial",
+                    "Pulsador Set/Reset"
+                ],
+                correct: 1,
+                hint: "Usa un contador o reloj interno.",
+                explanation: "El temporizador conmuta sus contactos auxiliares al transcurrir el tiempo ajustado por el operador."
+            },
+            {
+                id: 48,
+                category: "Esquemas y CADeSIMU",
+                catId: 4,
+                question: "En un esquema, ¿qué indica una luz piloto (lámpara de señalización) de color ROJO encendida?",
+                options: [
+                    "Motor en funcionamiento normal.",
+                    "Condición de Falla / Disparo por sobrecarga térmica.",
+                    "Falta de fase en la red.",
+                    "Sistema desenergizado de forma segura."
+                ],
+                correct: 1,
+                hint: "Generalmente se conecta al contacto NO 97-98 del relé térmico.",
+                explanation: "Normativamente, la luz roja indica alarma/falla por disparo de protección (sobrecarga térmica), mientras que verde/azul indica marcha normal."
+            },
+
+            // ==========================================
+            // CATEGORY 5: Protecciones y Diagnóstico (12)
+            // ==========================================
+            {
+                id: 49,
+                category: "Protecciones y Diagnóstico",
+                catId: 5,
+                question: "¿Frente a qué dos tipos de fallas eléctricas específicas protege un Disyuntor Magnetotérmico?",
+                options: [
+                    "Fugas a tierra y baja frecuencia.",
+                    "Sobrecargas (térmico) y Cortocircuitos (magnético).",
+                    "Sobretensión de rayo y falta de neutro.",
+                    "Bajo factor de potencia y armónicos."
+                ],
+                correct: 1,
+                hint: "Combina un bimetal (lento para sobrecarga) y un electroimán (instantáneo para cortocircuito).",
+                explanation: "El disyuntor automático tiene dos disparadores: el bimetálico para sobrecargas continuas y el magnético para cortocircuitos francos."
+            },
+            {
+                id: 50,
+                category: "Protecciones y Diagnóstico",
+                catId: 5,
+                question: "¿Cuál es la función principal del Interruptor Diferencial?",
+                options: [
+                    "Proteger al motor contra falta de fase.",
+                    "Proteger a las personas contra contactos directos e indirectos detectando fugas de corriente a tierra.",
+                    "Evitar que la factura eléctrica sea muy alta.",
+                    "Desconectar el circuito ante un cortocircuito entre fases."
+                ],
+                correct: 1,
+                hint: "Mide si la corriente de entrada es igual a la de salida. Si difieren, hay fuga.",
+                explanation: "El diferencial detecta desequilibrios entre fase y neutro (fugas a tierra), desconectando en milisegundos para salvar la vida de las personas."
+            },
+            {
+                id: 51,
+                category: "Protecciones y Diagnóstico",
+                catId: 5,
+                question: "¿Cuál es la sensibilidad estándar (IΔn) de un interruptor diferencial para protección domiciliaria e industrial de personas?",
+                options: [
+                    "10 A",
+                    "300 mA",
+                    "30 mA",
+                    "1 A"
+                ],
+                correct: 2,
+                hint: "30 miliamperes es el umbral de seguridad humana.",
+                explanation: "La norma exige una sensibilidad de 30 mA (0.03 A) para protección de alta sensibilidad contra fibrilación ventricular en seres humanos."
+            },
+            {
+                id: 52,
+                category: "Protecciones y Diagnóstico",
+                catId: 5,
+                question: "¿A qué valor de corriente debe ajustarse exactamente el dial del Relé Térmico de protección de un motor?",
+                options: [
+                    "A la corriente de arranque (Ia) del motor.",
+                    "A la Corriente Nominal (In) indicada en la placa de características del motor.",
+                    "Al doble de la corriente nominal.",
+                    "Al valor del disyuntor general (ej. 32A)."
+                ],
+                correct: 1,
+                hint: "El motor debe operar seguro a su corriente nominal de trabajo.",
+                explanation: "El dial de regulación del relé térmico debe ajustarse al valor de la Corriente Nominal (In) declarada en la placa del motor."
+            },
+            {
+                id: 53,
+                category: "Protecciones y Diagnóstico",
+                catId: 5,
+                question: "Al medir con un Multitester la resistencia de los tres bobinados de un motor trifásico en buen estado, ¿qué valores se deben obtener?",
+                options: [
+                    "Resistencia infinita (OL) en las tres bobinas.",
+                    "Valores de resistencia prácticamente idénticos entre los extremos de cada bobina (ej. U1-U2, V1-V2, W1-W2).",
+                    "Valores completamente diferentes: 10 Ω, 500 Ω y 2000 Ω.",
+                    "Cero Ohms exactos en todas la combinaciones posibles."
+                ],
+                correct: 1,
+                hint: "Las bobinas son simétricas, deben medir lo mismo.",
+                explanation: "Las tres bobinas de un motor trifásico son equilibradas y simétricas, por lo que su resistencia en ohmios debe ser prácticamente idéntica."
+            },
+            {
+                id: 54,
+                category: "Protecciones y Diagnóstico",
+                catId: 5,
+                question: "Al medir con el Multitester (Ohmetro/Megóhmetro) entre la carcasa metálica de tierra y cualquier borne del motor, ¿qué lectura indica un buen aislamiento?",
+                options: [
+                    "0.0 Ω (Continuidad directa)",
+                    "Resistencia extremadamente alta o Infinito (OL / varios MegaOhms)",
+                    "10 Ω exactos",
+                    "-50 Ω"
+                ],
+                correct: 1,
+                hint: "No debe existir ninguna fuga ni contacto entre las bobinas activas y el chasis metálico.",
+                explanation: "Un aislamiento correcto impide que la corriente pase a la carcasa. Debe marcar resistencia infinita o MΩ muy altos."
+            },
+            {
+                id: 55,
+                category: "Protecciones y Diagnóstico",
+                catId: 5,
+                question: "¿Qué ocurre si una de las tres fases se corta mientras un motor trifásico está funcionando bajo carga?",
+                options: [
+                    "El motor gira al doble de velocidad.",
+                    "El motor sufre 'marcha monofásica', aumenta su corriente en las dos fases restantes y se sobrecalienta hasta disparar el relé térmico.",
+                    "El motor cambia automáticamente de sentido de giro.",
+                    "El motor no sufre ningún efecto y sigue normal."
+                ],
+                correct: 1,
+                hint: "Se conoce como falta de fase o marcha bifásica/monofásica.",
+                explanation: "Ante la pérdida de una fase, las dos fases activas absorben más corriente para mantener el torque, sobrecalentando el motor."
+            },
+            {
+                id: 56,
+                category: "Protecciones y Diagnóstico",
+                catId: 5,
+                question: "¿Qué instrumento especializado se utiliza para medir la Resistencia de Aislamiento eléctrico a alta tensión en motores y cables?",
+                options: [
+                    "Ampermetro de tenaza simple",
+                    "Megóhmetro (Megger)",
+                    "Osciloscopio de frecuencia",
+                    "Luxómetro"
+                ],
+                correct: 1,
+                hint: "Mide en MegaOhms inyectando voltajes altos (500V - 1000V DC).",
+                explanation: "El Megóhmetro (o Megger) aplica tensiones de prueba (250V, 500V, 1000V) para verificar la rigidez y resistencia del aislamiento en MΩ."
+            },
+            {
+                id: 57,
+                category: "Protecciones y Diagnóstico",
+                catId: 5,
+                question: "Si al presionar el pulsador de marcha S1 el contactor se activa solo mientras se mantiene presionado el botón y se apaga al soltarlo, ¿cuál es la falla en el tablero?",
+                options: [
+                    "El relé térmico se quemó.",
+                    "Falta el enclavamiento / autorretención (contacto 13-14 de KM en paralelo con S1) o está mal conectado.",
+                    "El fusible del neutro se fundió.",
+                    "El motor tiene un cortocircuito a tierra."
+                ],
+                correct: 1,
+                hint: "El botón S1 es pulsador momentáneo, requiere un contacto propio del contactor que mantenga energizada la bobina.",
+                explanation: "Al soltar el pulsador Abierto (S1), el circuito se abre a menos que exista el contacto auxiliar 13-14 de KM en paralelo actuando como enclavamiento."
+            },
+            {
+                id: 58,
+                category: "Protecciones y Diagnóstico",
+                catId: 5,
+                question: "¿Qué curva de disparo electromagnético en un disyuntor automático es la más adecuada para proteger motores eléctricos debido a sus picos de corriente de arranque?",
+                options: [
+                    "Curva B (disparo rápido 3 a 5 In)",
+                    "Curva C (disparo estándar 5 a 10 In) o Curva D (10 a 20 In)",
+                    "Curva Z (ultra sensible)",
+                    "Curva A (para electrónica sensible)"
+                ],
+                correct: 1,
+                hint: "El arranque de un motor exige de 5 a 7 veces su corriente nominal durante unos segundos.",
+                explanation: "Las curvas C y D soportan los picos transitorios de corriente de arranque de motores sin dispararse falsamente."
+            },
+            {
+                id: 59,
+                category: "Protecciones y Diagnóstico",
+                catId: 5,
+                question: "En una revisión con Multitester en escala de voltaje AC, si mides entre dos Fases distintas (ej. L1 y L2) en un tablero trifásico estándar industrial de Chile, ¿qué valor debes leer?",
+                options: [
+                    "0 Volts",
+                    "220 Volts",
+                    "380 Volts",
+                    "500 Volts"
+                ],
+                correct: 2,
+                hint: "Tensión de línea en Chile es 380V; Tensión de fase (Fase a Neutro) es 220V.",
+                explanation: "En la red trifásica chilena, el voltaje entre fases (V de Línea) es de 380V AC, y entre cualquier Fase y Neutro es 220V AC."
+            },
+            {
+                id: 60,
+                category: "Protecciones y Diagnóstico",
+                catId: 60,
+                question: "Al detectar que un relé térmico se ha disparado (se abrió 95-96), ¿cuál es el procedimiento correcto antes de rearmar (resetear) y volver a encender?",
+                options: [
+                    "Subir el dial de corriente al máximo inmediatamente.",
+                    "Investigar y corregir la causa del sobrecalentamiento/mecánica trabada y esperar a que el bimetal se enfríe.",
+                    "Eliminar el relé térmico y puentear los cables directamente.",
+                    "Lavar el motor con agua."
+                ],
+                correct: 1,
+                hint: "Jamás se rearma a ciegas sin verificar por qué el motor consumió corriente de más.",
+                explanation: "Un disparo de relé térmico advierte que el motor sufrió sobrecarga o falla mecánica. Se debe auditar la causa raíz y enfriar el bimetal antes de rearmar."
+            }
+        ];
+
+        // TOPICS LIST FOR DASHBOARD
+        const TOPICS = [
+            { id: 1, name: "Potencia C.A. y Compensación Reactiva", desc: "Triángulo P, Q, S, cos(φ), Qc y cálculo de capacitancia C en µF.", count: 12, icon: "zap" },
+            { id: 2, name: "Máquinas Eléctricas", desc: "Transformadores, motores AC, velocidad ns, conexiones Estrella y Triángulo.", count: 12, icon: "cpu" },
+            { id: 3, name: "Conductores y Norma RIC N°4", desc: "Ampacidad, aislamiento THHN/EVA, código de colores y caída de tensión 3%.", count: 12, icon: "shield-check" },
+            { id: 4, name: "Esquemas de Fuerza, Mando y CADeSIMU", desc: "Simbología, partidas directas, enclavamiento, inversión y contactos 13-14/95-96.", count: 12, icon: "git-fork" },
+            { id: 5, name: "Protecciones y Diagnóstico", desc: "Disyuntores, diferencial 30mA, relé térmico, multitester y fallas.", count: 12, icon: "activity" }
+        ];
+
+        // APP STATE
+        class App {
+            constructor() {
+                this.currentMode = null; // 'exam', 'topic', 'flashcards'
+                this.activeQuestions = [];
+                this.currentIndex = 0;
+                this.userAnswers = [];
+                this.selectedOption = null;
+                this.score = 0;
+                this.timerInterval = null;
+                this.secondsElapsed = 0;
+                this.flashcardFlipped = false;
+
+                this.init();
+            }
+
+            init() {
+                this.renderTopics();
+                lucide.createIcons();
+            }
+
+            renderTopics() {
+                const container = document.getElementById("topics-grid");
+                container.innerHTML = TOPICS.map(t => `
+                    <div onclick="app.startTopicMode(${t.id})" class="bg-cardBg hover:bg-slate-800/90 border border-slate-700/70 hover:border-electric/50 rounded-xl p-4 cursor-pointer transition-all flex items-start space-x-4 shadow-md group">
+                        <div class="bg-electric/10 text-electric p-3 rounded-lg group-hover:bg-electric group-hover:text-white transition-colors">
+                            <i data-lucide="${t.icon}" class="w-6 h-6"></i>
+                        </div>
+                        <div class="flex-1">
+                            <div class="flex items-center justify-between">
+                                <h4 class="font-bold text-white text-sm group-hover:text-electric transition-colors">${t.name}</h4>
+                                <span class="text-xs bg-slate-800 px-2 py-0.5 rounded text-slate-400 font-mono">${t.count} preg</span>
+                            </div>
+                            <p class="text-xs text-slate-400 mt-1 leading-relaxed">${t.desc}</p>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            showDashboard() {
+                this.stopTimer();
+                this.hideAllViews();
+                document.getElementById("view-dashboard").classList.remove("hidden");
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+
+            hideAllViews() {
+                ['view-dashboard', 'view-quiz', 'view-flashcards', 'view-results'].forEach(id => {
+                    document.getElementById(id).classList.add("hidden");
+                });
+            }
+
+            scrollToTopics() {
+                document.getElementById("topics-section").scrollIntoView({ behavior: 'smooth' });
+            }
+
+            // MODE STARTERS
+            startExamMode() {
+                this.currentMode = 'exam';
+                this.activeQuestions = [...QUESTIONS].sort(() => Math.random() - 0.5); // Shuffle
+                this.resetQuizState();
+                this.showQuizView();
+                this.startTimer();
+            }
+
+            startTopicMode(catId) {
+                this.currentMode = 'topic';
+                this.activeQuestions = QUESTIONS.filter(q => q.catId === catId);
+                this.resetQuizState();
+                this.showQuizView();
+                this.stopTimer();
+            }
+
+            retryFailedQuestions() {
+                const failedIds = this.userAnswers.filter(a => !a.isCorrect).map(a => a.questionId);
+                this.activeQuestions = QUESTIONS.filter(q => failedIds.includes(q.id));
+                this.resetQuizState();
+                this.showQuizView();
+                this.stopTimer();
+            }
+
+            resetQuizState() {
+                this.currentIndex = 0;
+                this.userAnswers = [];
+                this.selectedOption = null;
+                this.score = 0;
+                this.secondsElapsed = 0;
+            }
+
+            showQuizView() {
+                this.hideAllViews();
+                document.getElementById("view-quiz").classList.remove("hidden");
+                this.renderCurrentQuestion();
+            }
+
+            // RENDER QUESTION
+            renderCurrentQuestion() {
+                const q = this.activeQuestions[this.currentIndex];
+                this.selectedOption = null;
+
+                // UI Updates
+                document.getElementById("quiz-topic-badge").innerText = q.category;
+                document.getElementById("quiz-current-num").innerText = this.currentIndex + 1;
+                document.getElementById("quiz-total-num").innerText = this.activeQuestions.length;
+
+                const progress = ((this.currentIndex) / this.activeQuestions.length) * 100;
+                document.getElementById("quiz-progress-bar").style.width = `${progress}%`;
+
+                document.getElementById("question-text").innerText = q.question;
+
+                // Render Options
+                const optionsContainer = document.getElementById("options-container");
+                optionsContainer.innerHTML = q.options.map((opt, idx) => `
+                    <button onclick="app.selectOption(${idx})" id="opt-btn-${idx}" class="w-full text-left p-4 rounded-xl bg-slate-800/80 hover:bg-slate-700/80 border border-slate-700 text-slate-200 text-sm font-medium transition-all flex items-center justify-between group">
+                        <div class="flex items-center space-x-3">
+                            <span class="w-6 h-6 rounded-full bg-slate-700 text-slate-300 flex items-center justify-center text-xs font-bold group-hover:bg-electric group-hover:text-white transition-colors">
+                                ${String.fromCharCode(65 + idx)}
+                            </span>
+                            <span>${opt}</span>
+                        </div>
+                        <i data-lucide="circle" class="w-4 h-4 text-slate-500 opt-icon"></i>
+                    </button>
+                `).join('');
+
+                // Hide feedback and hint
+                document.getElementById("feedback-card").classList.add("hidden");
+                document.getElementById("hint-box").classList.add("hidden");
+                document.getElementById("hint-text").innerText = q.hint;
+
+                // Next Button state
+                const btnNext = document.getElementById("btn-next");
+                btnNext.disabled = true;
+                btnNext.classList.add("opacity-50", "cursor-not-allowed");
+
+                lucide.createIcons();
+            }
+
+            selectOption(index) {
+                if (this.selectedOption !== null) return; // Prevent changing after selection
+                this.selectedOption = index;
+
+                const q = this.activeQuestions[this.currentIndex];
+                const isCorrect = index === q.correct;
+
+                if (isCorrect) this.score++;
+
+                // Record answer
+                this.userAnswers.push({
+                    questionId: q.id,
+                    question: q.question,
+                    selected: index,
+                    correct: q.correct,
+                    isCorrect: isCorrect,
+                    explanation: q.explanation,
+                    options: q.options
+                });
+
+                // Option styling
+                q.options.forEach((_, idx) => {
+                    const btn = document.getElementById(`opt-btn-${idx}`);
+                    btn.onclick = null; // Disable clicks
+
+                    if (idx === q.correct) {
+                        btn.classList.remove("bg-slate-800/80", "border-slate-700");
+                        btn.classList.add("bg-accentGreen/20", "border-accentGreen", "text-emerald-200");
+                    } else if (idx === index && !isCorrect) {
+                        btn.classList.remove("bg-slate-800/80", "border-slate-700");
+                        btn.classList.add("bg-accentRed/20", "border-accentRed", "text-red-200");
+                    } else {
+                        btn.classList.add("opacity-40");
+                    }
+                });
+
+                // Feedback display
+                const feedbackCard = document.getElementById("feedback-card");
+                const feedbackTitle = document.getElementById("feedback-title");
+                const feedbackExp = document.getElementById("feedback-explanation");
+
+                feedbackCard.classList.remove("hidden", "bg-emerald-950/40", "border-emerald-700", "bg-red-950/40", "border-red-700");
+
+                if (isCorrect) {
+                    feedbackCard.classList.add("bg-emerald-950/40", "border-emerald-700");
+                    feedbackTitle.className = "flex items-center space-x-2 font-bold text-emerald-400";
+                    feedbackTitle.innerHTML = `<i data-lucide="check-circle" class="w-5 h-5"></i> <span>¡Correcto!</span>`;
+                } else {
+                    feedbackCard.classList.add("bg-red-950/40", "border-red-700");
+                    feedbackTitle.className = "flex items-center space-x-2 font-bold text-red-400";
+                    feedbackTitle.innerHTML = `<i data-lucide="x-circle" class="w-5 h-5"></i> <span>Incorrecto</span>`;
+                }
+
+                feedbackExp.innerText = q.explanation;
+
+                // Enable Next Button
+                const btnNext = document.getElementById("btn-next");
+                btnNext.disabled = false;
+                btnNext.classList.remove("opacity-50", "cursor-not-allowed");
+
+                lucide.createIcons();
+            }
+
+            toggleHint() {
+                const hintBox = document.getElementById("hint-box");
+                hintBox.classList.toggle("hidden");
+            }
+
+            nextQuestion() {
+                if (this.selectedOption === null) return;
+
+                this.currentIndex++;
+                if (this.currentIndex < this.activeQuestions.length) {
+                    this.renderCurrentQuestion();
+                } else {
+                    this.finishQuiz();
+                }
+            }
+
+            finishQuiz() {
+                this.stopTimer();
+                this.hideAllViews();
+                document.getElementById("view-results").classList.remove("hidden");
+
+                const total = this.activeQuestions.length;
+                const percentage = Math.round((this.score / total) * 100);
+                const incorrect = total - this.score;
+
+                document.getElementById("res-score").innerText = this.score;
+                document.getElementById("res-total").innerText = total;
+                document.getElementById("res-percent").innerText = `${percentage}%`;
+                document.getElementById("res-correct").innerText = this.score;
+                document.getElementById("res-incorrect").innerText = incorrect;
+
+                // Header message & Icon
+                const title = document.getElementById("result-title");
+                const iconContainer = document.getElementById("result-icon-container");
+
+                if (percentage >= 85) {
+                    title.innerText = "¡Excelente Trabajo! Dominas la materia";
+                    iconContainer.className = "inline-flex p-4 rounded-full bg-accentGreen/20 text-accentGreen mb-2";
+                } else if (percentage >= 60) {
+                    title.innerText = "¡Buen Intento! Estás aprobado";
+                    iconContainer.className = "inline-flex p-4 rounded-full bg-accentYellow/20 text-accentYellow mb-2";
+                } else {
+                    title.innerText = "Necesitas Repasar Más";
+                    iconContainer.className = "inline-flex p-4 rounded-full bg-accentRed/20 text-accentRed mb-2";
+                }
+
+                // Show retry failed button if errors exist
+                const btnRetry = document.getElementById("btn-retry-failed");
+                if (incorrect > 0) {
+                    btnRetry.classList.remove("hidden");
+                    document.getElementById("failed-count").innerText = incorrect;
+                } else {
+                    btnRetry.classList.add("hidden");
+                }
+
+                // Render error review list
+                this.renderReview();
+            }
+
+            renderReview() {
+                const container = document.getElementById("review-container");
+                if (this.userAnswers.length === 0) {
+                    container.innerHTML = `<p class="text-slate-400 text-sm">No hay registro de respuestas.</p>`;
+                    return;
+                }
+
+                container.innerHTML = this.userAnswers.map((ans, idx) => `
+                    <div class="bg-cardBg border ${ans.isCorrect ? 'border-emerald-800/60' : 'border-red-800/60'} rounded-xl p-5 space-y-3">
+                        <div class="flex items-start justify-between gap-2">
+                            <span class="text-xs font-bold text-slate-400">Pregunta ${idx + 1}</span>
+                            <span class="text-xs font-bold px-2 py-0.5 rounded ${ans.isCorrect ? 'bg-accentGreen/20 text-accentGreen' : 'bg-accentRed/20 text-accentRed'}">
+                                ${ans.isCorrect ? 'Correcta' : 'Incorrecta'}
+                            </span>
+                        </div>
+                        <h4 class="font-semibold text-white text-sm md:text-base">${ans.question}</h4>
+                        <div class="text-xs space-y-1">
+                            <p class="${ans.isCorrect ? 'text-accentGreen' : 'text-accentRed'} font-medium">
+                                Tu respuesta: ${ans.options[ans.selected]}
+                            </p>
+                            ${!ans.isCorrect ? `<p class="text-accentGreen font-medium">Respuesta correcta: ${ans.options[ans.correct]}</p>` : ''}
+                        </div>
+                        <div class="bg-slate-800/80 rounded-lg p-3 text-xs text-slate-300 leading-relaxed border border-slate-700">
+                            <strong class="text-electric block mb-0.5">Explicación:</strong>
+                            ${ans.explanation}
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            // FLASHCARDS MODE
+            startFlashcards() {
+                this.currentMode = 'flashcards';
+                this.activeQuestions = [...QUESTIONS];
+                this.currentIndex = 0;
+                this.flashcardFlipped = false;
+
+                this.hideAllViews();
+                document.getElementById("view-flashcards").classList.remove("hidden");
+                this.renderFlashcard();
+            }
+
+            renderFlashcard() {
+                const q = this.activeQuestions[this.currentIndex];
+                document.getElementById("fc-current").innerText = this.currentIndex + 1;
+                document.getElementById("fc-total").innerText = this.activeQuestions.length;
+
+                document.getElementById("fc-category").innerText = q.category;
+                document.getElementById("fc-question").innerText = q.question;
+                
+                // Show correct answer + explanation on back
+                const correctAnswerText = q.options[q.correct];
+                document.getElementById("fc-answer").innerHTML = `
+                    <div class="space-y-3">
+                        <div>
+                            <span class="text-xs text-slate-400 uppercase font-bold block">Respuesta Correcta:</span>
+                            <span class="text-base font-bold text-accentGreen">${correctAnswerText}</span>
+                        </div>
+                        <div class="border-t border-slate-700 pt-2">
+                            <span class="text-xs text-slate-400 uppercase font-bold block">Detalle técnico:</span>
+                            <p class="text-xs text-slate-300">${q.explanation}</p>
+                        </div>
+                    </div>
+                `;
+
+                // Unflip card
+                this.flashcardFlipped = false;
+                document.getElementById("flashcard-inner").classList.remove("rotate-y-180");
+            }
+
+            flipFlashcard() {
+                this.flashcardFlipped = !this.flashcardFlipped;
+                const inner = document.getElementById("flashcard-inner");
+                if (this.flashcardFlipped) {
+                    inner.classList.add("rotate-y-180");
+                } else {
+                    inner.classList.remove("rotate-y-180");
+                }
+            }
+
+            nextFlashcard() {
+                if (this.currentIndex < this.activeQuestions.length - 1) {
+                    this.currentIndex++;
+                    this.renderFlashcard();
+                }
+            }
+
+            prevFlashcard() {
+                if (this.currentIndex > 0) {
+                    this.currentIndex--;
+                    this.renderFlashcard();
+                }
+            }
+
+            // TIMER LOGIC
+            startTimer() {
+                const timerDisplay = document.getElementById("timer-display");
+                timerDisplay.classList.remove("hidden");
+                this.secondsElapsed = 0;
+
+                this.timerInterval = setInterval(() => {
+                    this.secondsElapsed++;
+                    const mins = String(Math.floor(this.secondsElapsed / 60)).padStart(2, '0');
+                    const secs = String(this.secondsElapsed % 60).padStart(2, '0');
+                    timerDisplay.innerHTML = `<i data-lucide="clock" class="w-4 h-4"></i> ${mins}:${secs}`;
+                }, 1000);
+            }
+
+            stopTimer() {
+                if (this.timerInterval) clearInterval(this.timerInterval);
+                document.getElementById("timer-display").classList.add("hidden");
+            }
+
+            // MODAL FORMULA & CALC
+            toggleFormulaModal() {
+                const modal = document.getElementById("modal-formula");
+                modal.classList.toggle("hidden");
+            }
+
+            calculateCapacitance() {
+                const Qc = parseFloat(document.getElementById("calc-qc").value) || 0;
+                const V = parseFloat(document.getElementById("calc-v").value) || 0;
+                const f = parseFloat(document.getElementById("calc-f").value) || 0;
+
+                if (Qc > 0 && V > 0 && f > 0) {
+                    // C = Qc / (2 * pi * f * V^2)
+                    const C_farads = Qc / (2 * Math.PI * f * Math.pow(V, 2));
+                    const C_micro = C_farads * 1000000;
+                    document.getElementById("calc-result").innerText = `Resultado: ${C_micro.toFixed(2)} µF`;
+                } else {
+                    document.getElementById("calc-result").innerText = `Por favor ingresa valores válidos.`;
+                }
+            }
+        }
+
+        // Initialize App Globally
+        let app;
+        window.onload = () => {
+            app = new App();
+        };
+    </script>
+</body>
+</html>
